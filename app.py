@@ -6,6 +6,40 @@ from pathlib import Path
 import base64
 
 # =========================================================
+# PASSWORD PROTECTION
+# =========================================================
+def check_password():
+    """Returns `True` if the user had the correct password."""
+
+    def password_entered():
+        """Checks whether a password entered by the user is correct."""
+        if st.session_state["password"] == st.secrets["password"]:
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Please enter the access password", type="password", on_change=password_entered, key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password incorrect, show input + error.
+        st.text_input(
+            "Please enter the access password", type="password", on_change=password_entered, key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if not check_password():
+    st.stop()  # Do not run the rest of the app if not authenticated
+
+# =========================================================
 # CONFIG
 # =========================================================
 st.set_page_config(page_title="Interactive Shark Phylogeny", layout="wide")
@@ -383,3 +417,4 @@ if st.session_state.render_requested and st.session_state.tree_valid:
         st.graphviz_chart(dot)
         st.markdown(get_image_download_link(dot, f"{st.session_state.chart_title}.png"), unsafe_allow_html=True)
         st.markdown(get_svg_download_link(dot, f"{st.session_state.chart_title}.svg"), unsafe_allow_html=True)
+
