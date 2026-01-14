@@ -6,6 +6,44 @@ from pathlib import Path
 import base64
 
 # =========================================================
+# PASSWORD PROTECTION
+# =========================================================
+def check_password():
+    """Returns True if the user had the correct password."""
+    def password_entered():
+        if st.session_state["password"] == "Shark2026":
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]  # don't store password
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        # First run, show input for password.
+        st.text_input(
+            "Please enter the access password", 
+            type="password", 
+            on_change=password_entered, 
+            key="password"
+        )
+        return False
+    elif not st.session_state["password_correct"]:
+        # Password not correct, show input + error.
+        st.text_input(
+            "Please enter the access password", 
+            type="password", 
+            on_change=password_entered, 
+            key="password"
+        )
+        st.error("😕 Password incorrect")
+        return False
+    else:
+        # Password correct.
+        return True
+
+if not check_password():
+    st.stop()  # Do not run the rest of the app if password isn't correct
+
+# =========================================================
 # CONFIG
 # =========================================================
 st.set_page_config(page_title="Interactive Shark Phylogeny", layout="wide")
@@ -429,3 +467,4 @@ if st.session_state.render_requested and st.session_state.tree_valid:
             st.markdown(get_download_button(dot, "shark_tree.svg", "svg", "🌐 Download as SVG (Vector)"), unsafe_allow_html=True)
         
         st.session_state.confirmed_large_tree = False
+
