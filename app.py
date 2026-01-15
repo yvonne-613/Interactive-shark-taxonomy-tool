@@ -6,42 +6,28 @@ from pathlib import Path
 import base64
 
 # =========================================================
-# PASSWORD PROTECTION
+# SECURE PASSWORD PROTECTION
 # =========================================================
 def check_password():
-    """Returns True if the user had the correct password."""
     def password_entered():
-        if st.session_state["password"] == "Shark2026":
+        # Pulls the password from your hidden secrets.toml file
+        if st.session_state["password"] == st.secrets["password"]:
             st.session_state["password_correct"] = True
-            del st.session_state["password"]  # don't store password
+            del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        # First run, show input for password.
-        st.text_input(
-            "Please enter the access password", 
-            type="password", 
-            on_change=password_entered, 
-            key="password"
-        )
+        st.text_input("Access Password", type="password", on_change=password_entered, key="password")
         return False
     elif not st.session_state["password_correct"]:
-        # Password not correct, show input + error.
-        st.text_input(
-            "Please enter the access password", 
-            type="password", 
-            on_change=password_entered, 
-            key="password"
-        )
+        st.text_input("Access Password", type="password", on_change=password_entered, key="password")
         st.error("😕 Password incorrect")
         return False
-    else:
-        # Password correct.
-        return True
+    return True
 
 if not check_password():
-    st.stop()  # Do not run the rest of the app if password isn't correct
+    st.stop()
 
 # =========================================================
 # CONFIG
@@ -467,4 +453,5 @@ if st.session_state.render_requested and st.session_state.tree_valid:
             st.markdown(get_download_button(dot, "shark_tree.svg", "svg", "🌐 Download as SVG (Vector)"), unsafe_allow_html=True)
         
         st.session_state.confirmed_large_tree = False
+
 
