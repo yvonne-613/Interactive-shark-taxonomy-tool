@@ -177,7 +177,7 @@ with st.sidebar:
     st.divider()
     st.subheader("🔦 Highlight Species")
     
-    # FIX: We use the 'working_df' which has already been narrowed down 
+ 
     # by your Order/Family/Genus selections in the main UI
     available_species = sorted(working_df["Full_Species"].unique())
     
@@ -256,7 +256,7 @@ if idx and idx != list(range(min(idx), max(idx) + 1)):
 # =========================================================
 def build_horizontal_taxonomic_tree(df, active_levels, chart_title):
     dot = Digraph(graph_attr={
-        "rankdir": "LR", "nodesep": "1.0", "ranksep": "3.0",
+        "rankdir": "LR", "nodesep": "0.2", "ranksep": "1.5",
         "splines": "ortho", "fontsize": "40", "label": chart_title,
         "fontname": "Arial-Bold", "labelloc": "t"
     })
@@ -301,7 +301,7 @@ def build_horizontal_taxonomic_tree(df, active_levels, chart_title):
                         p_width = "3"
 
                 dot.node(node_id, label, style="filled", fillcolor=f_color, 
-                         color=e_color, penwidth=p_width, shape="box")
+                         color=e_color, penwidth=p_width, shape="box", fontsize="42", fontname="Arial")
                 drawn_nodes.add(node_id)
 
             if next_lvl:
@@ -453,5 +453,6 @@ if st.session_state.render_requested and st.session_state.tree_valid:
             st.markdown(get_download_button(dot, "shark_tree.svg", "svg", "🌐 Download as SVG (Vector)"), unsafe_allow_html=True)
         
         st.session_state.confirmed_large_tree = False
+
 
 
